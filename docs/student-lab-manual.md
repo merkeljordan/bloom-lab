@@ -489,7 +489,7 @@ If your FPGA disagrees with simulation, what could be wrong?
 
 ____________________________________________________
 
-☐ Level 1 demo complete (instructor stamp / initials: ______)
+☐ Level 1 demo complete (initials: ______)
 
 ---
 
@@ -825,7 +825,7 @@ Ideas: 3-cycle password lock · traffic light · red light / green light.
 
 ## Deliverables
 
-Course version (workshops may only stamp checkpoints):
+Course version:
 
 1. Completed pre-lab
 2. Checkpoints and reflection (this manual or typed equivalent)
@@ -833,8 +833,6 @@ Course version (workshops may only stamp checkpoints):
 4. Simulation transcript or passing-testbench screenshot
 5. Pair names + what you demonstrated on the board
 6. Optional: challenge RTL + new state diagram
-
-See [`grading-rubric.md`](grading-rubric.md).
 
 ---
 

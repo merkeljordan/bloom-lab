@@ -18,7 +18,6 @@ flowchart LR
 | [`slides/index.html`](slides/index.html) | Facilitators | Workshop slides (open in a browser) |
 | [`docs/student-lab-manual.md`](docs/student-lab-manual.md) | Students | Full lab: pre-lab through reflection |
 | [`docs/instructor-guide.md`](docs/instructor-guide.md) | Instructors | Setup, solutions, pedagogy, schedule |
-| [`docs/grading-rubric.md`](docs/grading-rubric.md) | Both | Suggested scoring |
 | [`docs/vivado-cheatsheet.md`](docs/vivado-cheatsheet.md) | Students | Click-path for Vivado |
 | [`rtl/`](rtl/) | Students | Starter RTL, testbenches, top wrappers |
 | [`constraints/basys3_bloom.xdc`](constraints/basys3_bloom.xdc) | Students | Basys 3 pin map |

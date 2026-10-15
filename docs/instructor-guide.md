@@ -28,7 +28,7 @@ Keep Level 1 tiny (one AND) so every student gets a bitstream on the board. Leve
 
 - Assume mixed prior coding experience; never treat Python/C knowledge as a prerequisite for “being an engineer.”  
 - Prefer “the circuit does X” over “you did it wrong.”  
-- Stamp **simulation pass** before allowing FPGA time so boards don’t become a bottleneck.  
+- Check off **simulation pass** before allowing FPGA time so boards don’t become a bottleneck.  
 - Offer a printed LED overlay so the metaphor is visible from across the table.  
 - If someone has motor or vision constraints, they can drive the keyboard while a partner handles switches, or use the visualizer.
 
@@ -109,7 +109,7 @@ Before the workshop:
 ☐ Test every physical input/output (SW0/SW1/BTNC/BTNU/LD0–2)  
 ☐ Test `viz/bloom_viz.py` on at least one PC  
 ☐ Prepare backup USB drives / shared project folder  
-☐ Print student manuals + stamp sheet  
+☐ Print student manuals  
 ☐ Prepare flower LED overlays  
 ☐ Label boards 1…N and cables  
 
