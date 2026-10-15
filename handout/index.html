@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Bloom — at your board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=JetBrains+Mono:wght@500&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #fff4f8;
+      --ink: #5a2438;
+      --muted: #8a4d62;
+      --pink: #e86b96;
+      --pink-deep: #c73e72;
+      --blush: #ffd6e6;
+      --line: #ffc2d6;
+    }
+    @page { size: letter; margin: 0.35in; }
+    * { box-sizing: border-box; }
+    html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body {
+      margin: 0;
+      background: #f3e6ec;
+      color: var(--ink);
+      font: 10pt/1.36 "Nunito", "Segoe UI", sans-serif;
+    }
+    .page {
+      width: 8.52in;
+      min-height: 10.94in;
+      margin: 0.3in auto;
+      padding: 0.32in 0.36in;
+      background: #fff;
+      box-shadow: 0 4px 24px rgba(90, 36, 56, 0.15);
+    }
+    @media print {
+      body { background: #fff; }
+      .page { margin: 0; box-shadow: none; padding: 0; width: auto; min-height: 0; }
+    }
+
+    header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      border-bottom: 2px dashed var(--line);
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+    }
+    h1 {
+      font-family: "Baloo 2", sans-serif;
+      font-size: 26pt;
+      line-height: 1;
+      margin: 0;
+      color: var(--pink-deep);
+    }
+    h1 small { font-size: 12pt; color: var(--muted); font-weight: 600; margin-left: 8px; }
+    header p { margin: 0; color: var(--muted); font-weight: 700; }
+
+    h2 {
+      font-family: "Baloo 2", sans-serif;
+      font-size: 13pt;
+      margin: 0 0 4px;
+      color: var(--pink-deep);
+    }
+    h2 .n {
+      display: inline-grid;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      margin-right: 6px;
+      border-radius: 50%;
+      background: var(--pink);
+      color: #fff;
+      font-size: 10pt;
+      vertical-align: 2px;
+    }
+
+    .box {
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      padding: 7px 12px 8px;
+      margin-bottom: 8px;
+      background: #fff;
+    }
+    .box.soft { background: var(--paper); }
+    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
+
+    p { margin: 0 0 4px; }
+    ol, ul { margin: 2px 0 0; padding-left: 18px; }
+    li { margin: 0 0 3px; }
+    li::marker { color: var(--pink-deep); font-weight: 800; }
+    code {
+      font-family: "JetBrains Mono", Consolas, monospace;
+      font-size: 0.86em;
+      background: var(--blush);
+      border-radius: 4px;
+      padding: 0 4px;
+    }
+    b { color: var(--pink-deep); }
+    .click { font-weight: 800; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 3px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-weight: 800; font-size: 9pt; text-transform: uppercase; letter-spacing: 0.03em; }
+    tr:last-child td { border-bottom: 0; }
+
+    .tops td:first-child { color: var(--muted); font-weight: 700; width: 30%; }
+    .ok { color: #2f7d52; font-weight: 800; }
+    .foot { text-align: center; color: var(--muted); font-size: 9pt; margin-top: 2px; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>Bloom <small>at your board</small></h1>
+      <p>Describe it. Choose the pieces. Then write RTL.</p>
+    </header>
+
+    <div class="box soft">
+      <h2><span class="n">1</span>The only file you edit</h2>
+      <div class="cols">
+        <p><b>Level 1:</b> <code>flower_level1.sv</code> &nbsp;·&nbsp; <b>Level 2:</b> <code>flower_level2.sv</code></p>
+        <p>Leave the <code>top_level</code>, <code>tb_</code>, and <code>.xdc</code> files alone. They are already done.</p>
+      </div>
+    </div>
+
+    <div class="box">
+      <h2><span class="n">2</span>Every change: save, simulate, build, program</h2>
+      <table class="tops">
+        <thead><tr><th></th><th>Level 1</th><th>Level 2</th></tr></thead>
+        <tbody>
+          <tr><td>Simulation top</td><td><code>tb_flower_level1</code></td><td><code>tb_flower_level2</code></td></tr>
+          <tr><td>Board top</td><td><code>top_level1</code></td><td><code>top_level2</code></td></tr>
+          <tr><td>Test should print</td><td class="ok">LEVEL1 TESTBENCH PASSED</td><td class="ok">LEVEL2 TESTBENCH PASSED</td></tr>
+        </tbody>
+      </table>
+      <div class="cols" style="margin-top:6px">
+        <ol>
+          <li><span class="click">Save</span> your file with <code>Ctrl+S</code>.</li>
+          <li><span class="click">Simulate.</span> In <span class="click">Sources → Simulation Sources</span>, right-click the simulation top → <span class="click">Set as Top</span>. Then <span class="click">Run Simulation → Run Behavioral Simulation</span>. Read the <span class="click">Tcl Console</span> at the bottom for the PASSED line. Close the simulation when done.</li>
+        </ol>
+        <ol start="3">
+          <li><span class="click">Build.</span> In <span class="click">Design Sources</span>, right-click the board top → <span class="click">Set as Top</span>. Click <span class="click">Generate Bitstream</span> and say yes to running the earlier steps. Wait for <span class="click">Bitstream Generation Completed</span>.</li>
+          <li><span class="click">Program.</span> Board plugged in and switched on. <span class="click">Open Hardware Manager → Open Target → Auto Connect → Program Device → Program</span>. The green <b>DONE</b> light turns on.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="cols">
+      <div class="box">
+        <h2><span class="n">3</span>The board</h2>
+        <table>
+          <tbody>
+            <tr><td><b>SW0</b></td><td>Water</td></tr>
+            <tr><td><b>SW1</b></td><td>Sun</td></tr>
+            <tr><td><b>BTNC</b></td><td>Reset to seed (Level 2)</td></tr>
+            <tr><td><b>BTNU</b></td><td>Grow again, if both switches are on (Level 2)</td></tr>
+            <tr><td><b>LD0–LD2</b></td><td>Seed, sprout, bloom. Level 1 uses LD0 only.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="box">
+        <h2><span class="n">4</span>What you should see</h2>
+        <p><b>Level 1:</b> LD0 lights only when SW0 and SW1 are both up. Flip either one down and it turns off right away.</p>
+        <p><b>Level 2:</b></p>
+        <ol>
+          <li>Press BTNC. LD0: seed.</li>
+          <li>Turn both switches on. LD1: sprout.</li>
+          <li>Press BTNU. LD2: bloom. It stays there until reset.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="box">
+      <h2><span class="n">5</span>If something is wrong</h2>
+      <div class="cols">
+        <ul>
+          <li><b>Red error in Vivado:</b> open the <span class="click">Messages</span> tab and fix the <em>first</em> error. It gives the line number.</li>
+          <li><b>Test says FAILED:</b> the line above it names the case. Compare it to the table on the slide.</li>
+          <li><b>Board doesn't match the test:</b> did you save? Is the right board top set? Generate the bitstream and program again.</li>
+        </ul>
+        <ul>
+          <li><b>Level 2 jumps straight to bloom:</b> your stage changes on every clock. Only move when <code>grow</code> is 1.</li>
+          <li><b>Level 2 does nothing:</b> press BTNC first, then turn both switches on.</li>
+          <li><b>Hardware Manager can't find the board:</b> check the power switch, then try another USB port or cable.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="box soft">
+      <h2><span class="n">6</span>Optional: the flower window</h2>
+      <p>With the board programmed and plugged in, run <code>python viz/bloom_viz.py COM5</code>. Use your board's port from <span class="click">Device Manager → Ports</span>. Install the serial library once with <code>python -m pip install pyserial</code>.</p>
+    </div>
+
+    <p class="foot">Stuck for more than a few minutes? Raise your hand. That's what we're here for.</p>
+  </div>
+</body>
+</html>

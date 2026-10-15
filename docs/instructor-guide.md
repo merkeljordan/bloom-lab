@@ -2,7 +2,7 @@
 
 **Do not distribute this file or `solutions/` to students.**
 
-This guide supports the student manual in `docs/student-lab-manual.md`. The original workshop notes (Women in ECE, Basys 3, Vivado) are expanded here with setup, solutions, and common failure modes.
+Students learn from the slides (`slides/index.html`) and keep the one-page printout (`handout/index.html`) at their board. This guide is for you and your helpers: setup, solutions, and common failure modes.
 
 ---
 
@@ -41,7 +41,7 @@ Students should leave able to:
 - Separate combinational vs sequential.  
 - Write a 3-always-style FSM (register / next-state / output).  
 - Use simulation as a spec checker.  
-- Explain why a 100 MHz clock plus level-sensitive `water & sun` would skip states (Appendix B in the student manual).
+- Explain why a 100 MHz clock plus level-sensitive `water & sun` would skip states (the "One grow is a short pulse" slide).
 
 ---
 
@@ -85,10 +85,6 @@ Visualizer if serial is ready; otherwise LED showcase.
 
 ### 1:55–2:00 — Showcase + closing question
 
-### Course-lab variant (3 hours)
-
-Add 20 min pre-lab recap, 20 min write-up, and a required challenge diagram (even if RTL is unfinished).
-
 ---
 
 ## Instructor setup checklist
@@ -109,14 +105,14 @@ Before the workshop:
 ☐ Test every physical input/output (SW0/SW1/BTNC/BTNU/LD0–2)  
 ☐ Test `viz/bloom_viz.py` on at least one PC  
 ☐ Prepare backup USB drives / shared project folder  
-☐ Print student manuals  
+☐ Print one `handout/index.html` per board  
 ☐ Prepare flower LED overlays  
 ☐ Label boards 1…N and cables  
 
 ### Vivado project recipe (if you must rebuild)
 
 1. New project → RTL project → part `xc7a35tcpg236-1`.  
-2. Add files: all of `rtl/` except you may omit UART if unused.  
+2. Add files: `rtl/starters/flower_level1.sv`, `rtl/starters/flower_level2.sv`, and every other `.sv` in `rtl/` **except** `rtl/flower_level1.sv` and `rtl/flower_level2.sv`. Those two are finished answers and define the same modules as the starters.  
 3. Add `constraints/basys3_bloom.xdc`.  
 4. Simulation top: `tb_flower_level1` then later `tb_flower_level2`.  
 5. Implementation top: `top_level1` then `top_level2`.  
@@ -258,7 +254,7 @@ Wrappers, UART, debounce, and testbenches in `rtl/` are instructor-complete on p
 
 If boards fail, students can still be assessed on:
 
-- Pre-lab + diagrams  
+- Truth table + state diagram on paper  
 - Passing xsim / Vivado sim  
 - Walk-through of the FSM on a projector  
 

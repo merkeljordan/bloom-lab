@@ -596,6 +596,26 @@
       </section>
 
       <section>
+        <h2>Vivado does three jobs</h2>
+        <div class="grid-3">
+          <div class="card">
+            <h3>Simulate</h3>
+            <p>Runs a test on your circuit in software. Pick the <code>tb_</code> file and look for <strong>PASSED</strong>.</p>
+          </div>
+          <div class="card">
+            <h3>Build</h3>
+            <p>Turns your description into a file the chip can load. Pick the <code>top_level</code> file and generate the bitstream.</p>
+          </div>
+          <div class="card">
+            <h3>Program</h3>
+            <p>Sends that file over USB to the board. The green DONE light means it worked.</p>
+          </div>
+        </div>
+        <p class="callout">You do all three after every change. Every click is on your printout.</p>
+        <aside class="notes">Show the Sources pane once on the projector: where the tb_ and top_level files are, and where Set as Top is. That is where most people get stuck.</aside>
+      </section>
+
+      <section>
         <section>
           <p class="kicker">Level 1</p>
           <h2>Bloom only when both are on</h2>
@@ -768,9 +788,9 @@ end</code></pre>
 
       <section>
         <h2>A window can show the flower</h2>
-        <p>If the serial cable is set up, a small window on the laptop draws the stage. The board sends 0, 1, or 2. The window only displays that number.</p>
+        <p>The board also sends what it is doing over the USB cable: the stage, and whether water and sun are on. A small window on the laptop draws it, with rain, a sun, and the flower. The window only displays what the chip sends.</p>
         <p class="tiny"><code>python viz/bloom_viz.py COM5</code></p>
-        <aside class="notes">Skip this if serial is not ready. The LEDs are enough. COM port may not be COM5.</aside>
+        <aside class="notes">Works with Level 1 and Level 2. Skip this if serial is not ready; the LEDs are enough. The COM port may not be COM5. Running it with no port opens a demo with on-screen switches.</aside>
       </section>
 
       <section>

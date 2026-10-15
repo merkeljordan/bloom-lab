@@ -1,6 +1,6 @@
 # Bloom workshop slides
 
-A 2-hour facilitator deck that follows the student lab manual. Open in a browser (needs internet once for Reveal.js, Mermaid, and fonts).
+The deck teaches the whole lab; there is no separate manual. Open in a browser (needs internet once for Reveal.js, Mermaid, and fonts).
 
 ## Present
 
@@ -12,9 +12,9 @@ Print or PDF: open the same file with `?print-pdf` on the URL, then use the brow
 
 ## What is in the deck
 
-What the flower is → what RTL means → the build steps → the board → Level 1 (vertical stack) → Level 2 (vertical stack) → visualizer → extras → debug → close.
+What the flower is → what RTL means → the build steps → the board → what Vivado does → Level 1 (vertical stack) → Level 2 (vertical stack) → visualizer → extras → debug → close.
 
-Keep `docs/student-lab-manual.md` in front of students. These slides are for the projector, not a replacement for the handout.
+Students keep the one-page printout ([`handout/index.html`](../handout/index.html)) at their board. It has the Vivado clicks, the board map, and fixes for common problems.
 
 ## Offline
 

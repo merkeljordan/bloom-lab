@@ -15,10 +15,9 @@ flowchart LR
 
 | Path | Audience | Purpose |
 |---|---|---|
-| [`slides/index.html`](slides/index.html) | Facilitators | Workshop slides (open in a browser) |
-| [`docs/student-lab-manual.md`](docs/student-lab-manual.md) | Students | Full lab: pre-lab through reflection |
+| [`slides/index.html`](slides/index.html) | Everyone | Workshop slides; they teach the whole lab (open in a browser) |
+| [`handout/index.html`](handout/index.html) | Students | One-page printout for each board: Vivado clicks, board map, fixes |
 | [`docs/instructor-guide.md`](docs/instructor-guide.md) | Instructors | Setup, solutions, pedagogy, schedule |
-| [`docs/vivado-cheatsheet.md`](docs/vivado-cheatsheet.md) | Students | Click-path for Vivado |
 | [`rtl/`](rtl/) | Students | Starter RTL, testbenches, top wrappers |
 | [`constraints/basys3_bloom.xdc`](constraints/basys3_bloom.xdc) | Students | Basys 3 pin map |
 | [`viz/bloom_viz.py`](viz/bloom_viz.py) | Students | Optional serial flower visualizer |
@@ -27,7 +26,7 @@ flowchart LR
 
 ## Suggested duration
 
-**2 hours** as a facilitated workshop, or **one 3-hour lab period** if students also write a short report.
+About **2 hours** as a facilitated workshop.
 
 ## Hardware / software
 
@@ -39,12 +38,12 @@ flowchart LR
 
 ## How students should work
 
-1. Complete the **pre-lab** in the student manual (no FPGA required).
-2. Open the provided Vivado project (or add the files in `rtl/` and `constraints/`).
+1. Follow the slides on the projector, with the printout at the board.
+2. Open the station's Vivado project.
 3. Fill in **Level 1** (`flower_level1.sv`), simulate, then program.
 4. Fill in **Level 2** (`flower_level2.sv`), simulate, then program.
 5. Optionally connect the visualizer (`viz/bloom_viz.py`).
-6. Attempt at least one customization challenge.
+6. If there's time, try a change from the "Going further" slide.
 
 Do **not** start from solutions. Blank student copies with `TODO` markers are in `rtl/starters/`. The copies in `rtl/flower_level1.sv` and `rtl/flower_level2.sv` are the tested implementation (same behavior as `solutions/`).
 
@@ -60,4 +59,4 @@ Open [`sim/index.html`](sim/index.html) in a browser to flip water, sun, grow, a
 
 ## Instructor note
 
-Keep `solutions/` off the student share. Print or distribute only `docs/student-lab-manual.md` plus the starter `rtl/` and `constraints/` files.
+Keep `solutions/` off the student share. Print `handout/index.html` from a browser (it fits on one letter page). Give students the starter files from `rtl/starters/` plus the rest of `rtl/` and `constraints/`, but not `rtl/flower_level1.sv` or `rtl/flower_level2.sv`, which are finished answers.
