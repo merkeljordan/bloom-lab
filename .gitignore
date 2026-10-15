@@ -1,0 +1,41 @@
+# Vivado
+*.jou
+*.log
+*.str
+*.os
+*.pb
+*.wdb
+*.wcfg
+*.dcp
+*.bit
+*.ltx
+*.hw
+*.cache/
+*.gen/
+*.runs/
+*.sim/
+*.ip_user_files/
+*.xpr.bak
+.Xil/
+*.hwdef
+*.mcs
+*.prm
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# Local sim build (scripts/run_tests.py)
+build/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Keep solutions local if you copy them around
+*.bak

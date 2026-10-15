@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bloom — Your First RTL Design</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #fff4f8;
+      --ink: #5a2438;
+      --muted: #8a4d62;
+      --pink: #e86b96;
+      --pink-deep: #c73e72;
+      --blush: #ffd6e6;
+      --card: #ffffff;
+      --line: #ffc2d6;
+      --leaf: #6eae7c;
+      --peach: #fff1dc;
+      --peach-line: #f0c48a;
+    }
+    html, body { background: var(--paper); }
+    body::before,
+    body::after {
+      position: fixed;
+      z-index: 40;
+      pointer-events: none;
+      line-height: 1;
+    }
+    body::before {
+      content: "🌸";
+      top: 16px;
+      right: 22px;
+      font-size: 30px;
+    }
+    body::after {
+      content: "🌷";
+      left: 22px;
+      bottom: 14px;
+      font-size: 26px;
+    }
+    .reveal {
+      font-family: Nunito, "Segoe UI", sans-serif;
+      color: var(--ink);
+      font-size: 34px;
+      font-weight: 600;
+    }
+    .reveal .slides { text-align: left; }
+    .reveal h1, .reveal h2, .reveal h3 {
+      font-family: "Baloo 2", Nunito, sans-serif;
+      font-weight: 700;
+      color: var(--pink-deep);
+      text-transform: none;
+      letter-spacing: 0;
+      line-height: 1.12;
+    }
+    .reveal h1 { font-size: 2.35em; color: var(--pink); }
+    .reveal h2 { font-size: 1.5em; margin-bottom: 0.45em; }
+    .reveal h3 { font-size: 1.05em; color: var(--pink); }
+    .reveal p, .reveal li { color: var(--ink); }
+    .reveal strong { color: var(--pink-deep); font-weight: 800; }
+    .reveal a { color: var(--pink-deep); }
+    .reveal code, .reveal kbd {
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+    }
+    .reveal :not(pre) > code {
+      background: #fff;
+      color: var(--pink-deep);
+      border: 2px solid var(--blush);
+      border-radius: 8px;
+      padding: 0.05em 0.35em;
+      font-size: 0.86em;
+    }
+    .reveal kbd {
+      background: #fff;
+      color: var(--pink-deep);
+      border: 2px solid var(--line);
+      border-bottom-width: 3px;
+      border-radius: 8px;
+      padding: 0.04em 0.38em;
+      font-size: 0.9em;
+    }
+    .reveal pre {
+      width: 100%;
+      margin: 0.5em 0;
+      box-shadow: 5px 5px 0 var(--blush);
+      border-radius: 18px;
+      border: 2px solid var(--line);
+    }
+    .reveal pre code {
+      font-size: 0.52em;
+      line-height: 1.45;
+      max-height: none;
+      border-radius: 16px;
+    }
+    .reveal pre code.hljs {
+      background: #fffafc;
+      color: var(--ink);
+      padding: 0.85em 1em;
+    }
+    .reveal .progress { color: var(--pink); height: 6px; }
+    .reveal .controls { color: var(--pink); }
+    .reveal .slide-number {
+      font-family: Nunito, sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      background: #fff;
+      color: var(--pink-deep);
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 12px;
+      right: 16px;
+      bottom: 14px;
+    }
+    .backgrounds .slide-background {
+      background-color: var(--paper);
+      background-image: radial-gradient(#ffc9db 1.7px, transparent 1.8px);
+      background-size: 26px 26px;
+    }
+    .kicker {
+      display: inline-block;
+      font-family: "Baloo 2", Nunito, sans-serif;
+      font-size: 0.48em;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--pink-deep);
+      font-weight: 700;
+      background: #fff;
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      padding: 0.18em 0.75em 0.12em;
+      margin-bottom: 0.55em;
+      box-shadow: 3px 3px 0 var(--blush);
+    }
+    .kicker::before { content: "✿ "; }
+    .center-slide, .center-slide h1, .center-slide h2 { text-align: center; }
+    .center-slide { text-align: center; }
+    .subtitle {
+      font-family: "Baloo 2", Nunito, sans-serif;
+      font-size: 0.85em;
+      color: var(--pink-deep);
+      margin-top: 0.15em;
+    }
+    .meta {
+      margin-top: 1.3em;
+      font-size: 0.5em;
+      color: var(--ink);
+      display: flex;
+      gap: 0.7em;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .meta span {
+      background: #fff;
+      border: 2px solid var(--blush);
+      border-radius: 999px;
+      padding: 0.35em 0.8em;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85em;
+      align-items: start;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.65em;
+      align-items: stretch;
+    }
+    .card {
+      background: var(--card);
+      border: 2px solid var(--line);
+      border-radius: 22px;
+      padding: 0.7em 0.85em;
+      box-shadow: 5px 5px 0 var(--blush);
+    }
+    .card h3 { margin: 0 0 0.3em; }
+    .card p, .card li { font-size: 0.72em; }
+    .pill {
+      display: inline-block;
+      background: var(--blush);
+      border: none;
+      border-radius: 999px;
+      padding: 0.18em 0.6em;
+      font-size: 0.46em;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--pink-deep);
+      font-weight: 800;
+    }
+    .callout {
+      background: #fff;
+      border: 2px solid var(--line);
+      border-radius: 18px;
+      padding: 0.5em 0.75em;
+      font-size: 0.78em;
+      color: var(--ink);
+      box-shadow: 4px 4px 0 var(--blush);
+    }
+    .gold-callout {
+      background: var(--peach);
+      border-color: var(--peach-line);
+      box-shadow: 4px 4px 0 #f6ddb0;
+    }
+    table.pretty {
+      font-size: 0.58em;
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+      background: #fff;
+      border: 2px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 5px 5px 0 var(--blush);
+    }
+    table.pretty th, table.pretty td {
+      padding: 0.4em 0.55em;
+      text-align: left;
+      border-bottom: 1px solid #ffe4ee;
+    }
+    table.pretty tr:last-child td { border-bottom: none; }
+    table.pretty th {
+      background: #ffe4ef;
+      color: var(--pink-deep);
+      font-family: "Baloo 2", Nunito, sans-serif;
+      font-weight: 700;
+      font-size: 1.05em;
+    }
+    table.pretty td { color: var(--ink); font-weight: 700; }
+    table.pretty tbody tr:nth-child(even) td { background: #fff8fb; }
+    .mermaid {
+      background: transparent !important;
+      font-size: 16px !important;
+      display: flex;
+      justify-content: center;
+    }
+    .tiny { font-size: 0.52em; color: var(--muted); font-weight: 700; }
+    .big-quote {
+      font-family: "Baloo 2", Nunito, sans-serif;
+      font-size: 1.25em;
+      font-weight: 600;
+      color: var(--pink-deep);
+      line-height: 1.25;
+    }
+    .fill-in {
+      background: #fff1dc;
+      border: 2px dashed var(--peach-line);
+      border-radius: 8px;
+      padding: 0 0.3em;
+      color: #9a5a12;
+    }
+    .title-slide {
+      display: grid !important;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 1.4em;
+      align-items: center;
+    }
+    .title-slide h1 {
+      font-size: 3.6em;
+      margin: 0.05em 0 0;
+      line-height: 0.95;
+    }
+    .title-slide .subtitle { font-size: 1em; margin: 0.15em 0 0.7em; }
+    .title-slide .hook {
+      font-size: 0.78em;
+      line-height: 1.4;
+      max-width: 15em;
+    }
+    .mini-board {
+      background: #fff;
+      border: 2px solid var(--line);
+      border-radius: 32px;
+      box-shadow: 8px 8px 0 var(--blush);
+      padding: 0.9em 1em 0.8em;
+      text-align: center;
+      transform: rotate(2deg);
+    }
+    .plant {
+      position: relative;
+      height: 1.35em;
+      font-size: 2.1em;
+      line-height: 1.3;
+    }
+    .plant span {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      animation: stage 6s infinite;
+    }
+    .leds {
+      display: flex;
+      justify-content: center;
+      gap: 1.1em;
+      margin: 0.3em 0 0.7em;
+    }
+    .led-col { font-size: 0.4em; font-weight: 800; color: var(--muted); }
+    .led {
+      width: 34px;
+      height: 34px;
+      margin: 0 auto 0.4em;
+      border-radius: 50%;
+      background: #f6dbe5;
+      border: 3px solid #f1c3d4;
+      animation: glow 6s infinite;
+    }
+    .plant span:nth-child(2), .led-col:nth-child(2) .led { animation-delay: 2s; }
+    .plant span:nth-child(3), .led-col:nth-child(3) .led { animation-delay: 4s; }
+    .about-head { margin-bottom: 0.7em; }
+    .about-head .hello {
+      margin: 0;
+      font-size: 0.6em;
+      font-weight: 800;
+      color: var(--muted);
+    }
+    .about-head h2 { margin: 0 0 0.15em; font-size: 1.7em; }
+    .about-head .role {
+      display: inline-block;
+      margin: 0;
+      padding: 0.2em 0.85em;
+      border-radius: 999px;
+      background: var(--blush);
+      color: var(--pink-deep);
+      font-size: 0.55em;
+      font-weight: 800;
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.7em;
+      align-items: stretch;
+    }
+    .about-grid .card h3 { font-size: 0.85em; }
+    .about-grid .card p { font-size: 0.6em; line-height: 1.45; margin: 0 0 0.5em; }
+    .about-grid ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      font-size: 0.6em;
+      line-height: 1.45;
+    }
+    .about-grid .card li { font-size: 1em; margin: 0 0 0.45em; padding-left: 1.1em; position: relative; }
+    .about-grid li::before {
+      content: "✿";
+      position: absolute;
+      left: 0;
+      color: var(--pink);
+    }
+    .about-grid li small {
+      display: block;
+      color: var(--muted);
+      font-size: 0.85em;
+      font-weight: 700;
+    }
+    .about-ask { margin-top: 0.8em; font-size: 0.62em; }
+    .tags { display: flex; flex-wrap: wrap; gap: 0.4em; margin-top: 0.5em; }
+    .tags span {
+      padding: 0.2em 0.75em;
+      border-radius: 999px;
+      background: #ffe4ef;
+      border: 2px solid var(--line);
+      color: var(--pink-deep);
+      font-size: 0.55em;
+      font-weight: 800;
+    }
+    .circuit {
+      display: block;
+      width: 92%;
+      margin: 0 auto 0.5em;
+      overflow: visible;
+    }
+    .circuit .sig-label text {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 14px;
+      font-weight: 500;
+      fill: var(--muted);
+    }
+    .circuit .trace {
+      fill: none;
+      stroke: var(--pink);
+      stroke-width: 3;
+      stroke-linejoin: round;
+    }
+    .circuit .trace.out { stroke: var(--pink-deep); }
+    .circuit .wire {
+      fill: none;
+      stroke: #e9a9c0;
+      stroke-width: 2.5;
+      stroke-dasharray: 5 5;
+      animation: flow 1.2s linear infinite;
+    }
+    .circuit .gate {
+      fill: #ffe4ef;
+      stroke: var(--pink-deep);
+      stroke-width: 2.5;
+    }
+    .circuit .gate-label {
+      font-family: "Baloo 2", sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      fill: var(--pink-deep);
+    }
+    @keyframes flow { to { stroke-dashoffset: -10; } }
+    .switches {
+      display: flex;
+      justify-content: center;
+      gap: 1.4em;
+      border-top: 2px dashed var(--blush);
+      padding-top: 0.55em;
+      font-size: 0.4em;
+      font-weight: 800;
+      color: var(--muted);
+    }
+    .switch {
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      margin-right: 0.45em;
+      vertical-align: middle;
+      border-radius: 999px;
+      background: var(--pink);
+      position: relative;
+    }
+    .switch::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fff;
+    }
+    @keyframes stage {
+      0%, 30% { opacity: 1; transform: scale(1); }
+      33%, 100% { opacity: 0; transform: scale(0.8); }
+    }
+    @keyframes glow {
+      0%, 30% { background: var(--pink); border-color: var(--pink-deep); box-shadow: 0 0 18px 4px rgba(232, 107, 150, 0.55); }
+      33%, 100% { background: #f6dbe5; border-color: #f1c3d4; box-shadow: none; }
+    }
+    footer.hint {
+      position: absolute;
+      left: 58px;
+      bottom: 18px;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--pink-deep);
+      font-family: Nunito, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <section class="title-slide">
+        <div>
+          <h1>Bloom</h1>
+          <p class="subtitle">Your first RTL design</p>
+          <p class="hook">Learn how chips are designed, from an idea to a real circuit!</p>
+        </div>
+        <div class="mini-board" aria-hidden="true">
+          <div class="plant"><span>🌱</span><span>🌿</span><span>🌸</span></div>
+          <div class="leds">
+            <div class="led-col"><div class="led"></div>seed</div>
+            <div class="led-col"><div class="led"></div>sprout</div>
+            <div class="led-col"><div class="led"></div>bloom</div>
+          </div>
+          <svg class="circuit" viewBox="0 0 370 104">
+            <g class="sig-label">
+              <text x="0" y="29">water</text>
+              <text x="0" y="87">sun</text>
+              <text x="317" y="28" text-anchor="middle">bloom</text>
+            </g>
+            <polyline class="trace" points="54,34 72,34 72,14 110,14 110,34 128,34" />
+            <polyline class="trace" points="54,92 92,92 92,72 128,72" />
+            <polyline class="wire" points="136,24 165,24 165,42 190,42" />
+            <polyline class="wire" points="136,82 165,82 165,68 190,68" />
+            <path class="gate" d="M190,27 H213 A28,28 0 0 1 213,83 H190 Z" />
+            <text class="gate-label" x="212" y="60" text-anchor="middle">AND</text>
+            <line class="wire" x1="241" y1="55" x2="272" y2="55" />
+            <polyline class="trace out" points="280,60 318,60 318,40 336,40 336,60 354,60" />
+          </svg>
+          <div class="switches">
+            <span><i class="switch"></i>water</span>
+            <span><i class="switch"></i>sun</span>
+          </div>
+        </div>
+        <aside class="notes">Welcome. Everyone should finish Level 1 on the board. We say what the flower does, draw the circuit, then write that drawing down.</aside>
+      </section>
+
+      <section>
+        <div class="about-head">
+          <p class="hello">Hi, I’m</p>
+          <h2>Jordan Merkel</h2>
+          <p class="role">ASIC Design Engineer at AMD</p>
+        </div>
+        <div class="about-grid">
+          <div class="card">
+            <h3>What I do</h3>
+            <p>I design GPU chips. The same graphics chips end up in many places:</p>
+            <div class="tags"><span>Laptops &amp; PCs</span><span>AI</span><span>Gaming</span><span>Consoles</span></div>
+          </div>
+          <div class="card">
+            <h3>How I got here</h3>
+            <ul>
+              <li>B.S. in Computer Engineering<small>UCF</small></li>
+              <li>M.S. in Computer Engineering<small>UCF, in progress</small></li>
+              <li>Got into hardware through a love of gaming</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>For fun</h3>
+            <ul>
+              <li>Finding new coffee shops</li>
+              <li>Hanging out with my cat</li>
+              <li>Horseback riding</li>
+            </ul>
+          </div>
+        </div>
+        <p class="callout about-ask">Ask me anything today, about the lab or about working on chips.</p>
+        <aside class="notes">Keep this to a minute. A personal detail makes it easier for students to ask questions later.</aside>
+      </section>
+
+      <section>
+        <p class="kicker">About AMD</p>
+        <h2>AMD designs chips like the one on your board</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3>What AMD makes</h3>
+            <p>Processors for laptops, desktops, and data centers (Ryzen and EPYC), graphics chips (Radeon and Instinct), and FPGAs, the kind of reconfigurable chip in today’s lab.</p>
+          </div>
+          <div class="card">
+            <h3>On your desk today</h3>
+            <p>The chip on the Basys 3 is an AMD Artix-7 FPGA. Vivado, the program you will use to build and load your design, is AMD’s tool.</p>
+          </div>
+        </div>
+        <p class="callout">People at AMD start chips the same way you will start the flower: write down what it should do, choose the pieces, then describe them in RTL.</p>
+        <aside class="notes">Artix-7 and Vivado came from Xilinx, which AMD acquired in 2022. Mention it if someone has seen the Xilinx name on the board or in older docs.</aside>
+      </section>
+
+      <section>
+        <h2>You are making a flower on a chip</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Level 1</h3>
+            <p>Two switches: water and sun. One LED. It lights only when both switches are on. Turn either switch off and the LED goes off.</p>
+          </div>
+          <div class="card">
+            <h3>Level 2</h3>
+            <p>The same switches, but the flower grows in stages: seed, then sprout, then bloom. The circuit has to remember which stage it is in.</p>
+          </div>
+        </div>
+        <p>There is an optional window on the laptop later. It only shows the stage the board already picked.</p>
+      </section>
+
+      <section>
+        <h2>The text you write is the circuit</h2>
+        <p>A Python or C program runs on a computer that is already built. It follows your lines one after another.</p>
+        <p>Today the text is called <strong>RTL</strong>, for register-transfer level. It is a description of wires and memory, written in SystemVerilog. Many of those pieces exist at the same time.</p>
+        <p class="callout">The Basys 3 is a blank chip. Loading your design sets the chip up so it <em>is</em> that circuit.</p>
+        <aside class="notes">Pause on RTL. It is the name for the text, not a kind of software.</aside>
+      </section>
+
+      <section>
+        <h2>We do these steps in order</h2>
+        <ol>
+          <li>Write down what the flower should do.</li>
+          <li>Choose the pieces: gates, and later a small memory.</li>
+          <li>Describe those pieces in SystemVerilog.</li>
+          <li>Simulate, and read the result.</li>
+          <li>Load it onto the board and try the switches.</li>
+        </ol>
+        <p class="callout gold-callout">If simulation is wrong, change the description and simulate again. Then load that new design.</p>
+        <aside class="notes">Step 2 is the microarchitecture. Use that word once they have seen a drawing, not before.</aside>
+      </section>
+
+      <section>
+        <h2>Where to point on the board</h2>
+        <table class="pretty">
+          <thead><tr><th>On the board</th><th>What it is</th></tr></thead>
+          <tbody>
+            <tr><td>SW0</td><td>Water. Used in both levels.</td></tr>
+            <tr><td>SW1</td><td>Sun. Used in both levels.</td></tr>
+            <tr><td>BTNC</td><td>Reset, back to seed. Level 2.</td></tr>
+            <tr><td>BTNU</td><td>Another grow, if both switches are already on. Level 2.</td></tr>
+            <tr><td>LD0, LD1, LD2</td><td>Level 1 uses LD0 only. Level 2 uses all three: seed, sprout, bloom.</td></tr>
+          </tbody>
+        </table>
+        <p>The project already connects these pins. You fill in the flower circuit.</p>
+      </section>
+
+      <section>
+        <section>
+          <p class="kicker">Level 1</p>
+          <h2>Bloom only when both are on</h2>
+          <p class="big-quote">The flower blooms only when it has both water and sunlight.</p>
+          <p>Turn either switch off and the LED turns off immediately. This circuit does not remember anything.</p>
+          <aside class="notes">This kind of circuit is called combinational. Say that word if the room has seen it. Otherwise "no memory" is enough.</aside>
+        </section>
+        <section>
+          <h2>Every combination</h2>
+          <table class="pretty">
+            <thead><tr><th>Water</th><th>Sun</th><th>Bloom</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>0</td><td>0</td></tr>
+              <tr><td>0</td><td>1</td><td>0</td></tr>
+              <tr><td>1</td><td>0</td><td>0</td></tr>
+              <tr><td>1</td><td>1</td><td>1</td></tr>
+            </tbody>
+          </table>
+          <p>Water without sun stays off. The rule asks for both.</p>
+        </section>
+        <section>
+          <h2>So the circuit is one AND gate</h2>
+          <div class="mermaid">
+flowchart LR
+  W[water] --> G["AND gate"]
+  S[sun] --> G
+  G --> B[bloom]
+          </div>
+          <p>This drawing is the microarchitecture: the pieces, chosen before the file. SW0 and SW1 are the inputs. LD0 is the output. There is no clock.</p>
+          <aside class="notes">Ask what happens the moment sun turns off. The LED turns off immediately, because nothing is stored.</aside>
+        </section>
+        <section>
+          <h2>Write that gate down</h2>
+          <p>Open <code>flower_level1.sv</code>. One line describes the AND gate. Leave out the clock.</p>
+          <pre><code class="language-systemverilog" data-line-numbers>module flower_level1 (
+    input  logic water,
+    input  logic sun,
+    output logic bloom
+);
+    assign bloom = water &amp; sun;
+endmodule</code></pre>
+        </section>
+        <section>
+          <h2>Check it before the board</h2>
+          <p>The test tries all four rows of the table. You want this message:</p>
+          <p class="callout"><code>LEVEL1 TESTBENCH PASSED</code></p>
+          <p>If it fails, change <code>flower_level1.sv</code> and run the test again. Wait to load the board.</p>
+        </section>
+        <section>
+          <h2>Then load the board</h2>
+          <p>In Vivado, build <code>top_level1</code>. That name is the circuit Vivado programs onto the chip. Afterward, the DONE light on the Basys 3 turns on.</p>
+          <p>Try all four switch combinations. LD0 lights only when SW0 and SW1 are both on.</p>
+          <p class="callout">If the board and the test disagree, save the file, program the board again, and check the name is <code>top_level1</code>.</p>
+        </section>
+      </section>
+
+      <section>
+        <section>
+          <p class="kicker">Level 2</p>
+          <h2>Now it grows, and it remembers</h2>
+          <table class="pretty">
+            <thead><tr><th>What happens</th><th>Stage</th></tr></thead>
+            <tbody>
+              <tr><td>Reset, or just powered on</td><td>Seed</td></tr>
+              <tr><td>One grow</td><td>Seed → sprout</td></tr>
+              <tr><td>Another grow</td><td>Sprout → bloom</td></tr>
+              <tr><td>More grows</td><td>Stay in bloom</td></tr>
+            </tbody>
+          </table>
+          <p>Level 1 could forget the switches the moment they changed. This one has to keep the stage.</p>
+          <aside class="notes">A circuit with memory is called sequential. Introduce the word after the table, if you want the textbook name.</aside>
+        </section>
+        <section>
+          <h2>The memory is a register</h2>
+          <p>A register is a few memory cells, called flip-flops, that hold a number until the clock tells them to take a new one.</p>
+          <p>This flower has three stages, so the number is 0, 1, or 2. That fits in two flip-flops.</p>
+          <table class="pretty">
+            <thead><tr><th>Stage</th><th>Number</th><th>LED</th></tr></thead>
+            <tbody>
+              <tr><td>Seed</td><td>0</td><td>LD0</td></tr>
+              <tr><td>Sprout</td><td>1</td><td>LD1</td></tr>
+              <tr><td>Bloom</td><td>2</td><td>LD2</td></tr>
+            </tbody>
+          </table>
+        </section>
+        <section>
+          <h2>One grow is a short pulse</h2>
+          <p>The board clock ticks 100 million times a second. If the stage advanced on every tick while water and sun stayed on, the flower would finish before you could see it.</p>
+          <p class="callout">The project makes a signal called <code>grow</code>. It is 1 for a single clock tick, at the moment water and sun both become true. Pressing BTNU does the same thing while both switches are already on.</p>
+          <p>Your circuit should move forward only when <code>grow</code> is 1.</p>
+        </section>
+        <section>
+          <h2>Draw this before you type</h2>
+          <div class="mermaid">
+flowchart LR
+  SEED -->|grow| SPROUT -->|grow| BLOOM
+          </div>
+          <p>Bloom stays bloom. With no grow, seed and sprout stay put. Reset from any stage returns to seed. Sketch the arrows on paper before you open the file.</p>
+        </section>
+        <section>
+          <h2>Three pieces, all there together</h2>
+          <div class="mermaid">
+flowchart LR
+  IN["grow + stage"] --> NS[Next-stage gates]
+  NS --> REG["Register"]
+  REG --> OUT[LED gates]
+  OUT --> LED[LEDs]
+          </div>
+          <div class="grid-3">
+            <div class="card">
+              <h3>Next stage</h3>
+              <p>Gates. They look at <code>grow</code> and the number in the register.</p>
+            </div>
+            <div class="card">
+              <h3>Register</h3>
+              <p>On the clock, it saves that next number. Reset saves 0.</p>
+            </div>
+            <div class="card">
+              <h3>LEDs</h3>
+              <p>Gates. They light one LED from the saved number.</p>
+            </div>
+          </div>
+          <p>This drawing is the microarchitecture for Level 2. The file only describes it.</p>
+          <aside class="notes">The next-stage gates and the LED gates are both working all the time. The clock is the moment the register saves a new number.</aside>
+        </section>
+        <section>
+          <h2>How the register is written</h2>
+          <p>In <code>flower_level2.sv</code> the register looks like this. On reset it saves SEED. Otherwise it saves <code>next_state</code>.</p>
+          <pre><code class="language-systemverilog" data-line-numbers>always_ff @(posedge clk or posedge reset) begin
+    if (reset) state &lt;= SEED;
+    else       state &lt;= next_state;
+end</code></pre>
+          <p>The arrow <code>&lt;=</code> is the register update. The other two blocks, next stage and LEDs, use <code>=</code> because they are gates.</p>
+        </section>
+        <section>
+          <h2>Fill in the two gate blocks</h2>
+          <p>Start the next-stage block with <code>next_state = state</code>, so a stage stays put unless you name a move. Include a <code>default</code> that returns to seed.</p>
+          <table class="pretty">
+            <thead><tr><th>If the stage is…</th><th>and grow is 1…</th></tr></thead>
+            <tbody>
+              <tr><td>Seed</td><td>go to sprout</td></tr>
+              <tr><td>Sprout</td><td>go to bloom</td></tr>
+              <tr><td>Bloom</td><td>stay in bloom</td></tr>
+            </tbody>
+          </table>
+        </section>
+        <section>
+          <h2>What the test should show</h2>
+          <table class="pretty">
+            <thead><tr><th>What the test does</th><th>What you should see</th></tr></thead>
+            <tbody>
+              <tr><td>Reset, grow, grow</td><td>Seed, sprout, bloom</td></tr>
+              <tr><td>Reset, and no grow</td><td>Stay seed</td></tr>
+              <tr><td>One grow, then wait</td><td>Stay sprout</td></tr>
+              <tr><td>Three grows</td><td>Bloom stays bloom</td></tr>
+            </tbody>
+          </table>
+          <p>Wait for <code>LEVEL2 TESTBENCH PASSED</code>. On the board, build <code>top_level2</code>.</p>
+        </section>
+        <section>
+          <h2>On the board</h2>
+          <ol>
+            <li>Press BTNC. LD0 lights: seed.</li>
+            <li>Turn water and sun both on. LD1 lights: sprout.</li>
+            <li>Press BTNU. LD2 lights: bloom.</li>
+          </ol>
+          <p>Another way to get the second grow: turn the switches off, then turn both on again.</p>
+        </section>
+      </section>
+
+      <section>
+        <h2>A window can show the flower</h2>
+        <p>If the serial cable is set up, a small window on the laptop draws the stage. The board sends 0, 1, or 2. The window only displays that number.</p>
+        <p class="tiny"><code>python viz/bloom_viz.py COM5</code></p>
+        <aside class="notes">Skip this if serial is not ready. The LEDs are enough. COM port may not be COM5.</aside>
+      </section>
+
+      <section>
+        <p class="kicker">Going further</p>
+        <h2>Change the flower</h2>
+        <div class="grid-2">
+          <div class="card"><h3>The picture</h3><p>Colors, a different plant, or rain in the window.</p></div>
+          <div class="card"><h3>A fourth stage</h3><p>Write the new behavior and draw it, then change the file.</p></div>
+          <div class="card"><h3>A wilted stage</h3><p>Add a way in, and a way back out.</p></div>
+          <div class="card"><h3>A different machine</h3><p>A lock, a traffic light, or a tiny game. Same steps.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>If something is wrong</h2>
+        <ol>
+          <li>Vivado is red: read the first error.</li>
+          <li>The test fails: name the input, then say what the description says should happen.</li>
+          <li>The board disagrees with the test: save, program the board again, check <code>top_level1</code> or <code>top_level2</code>, and on Level 2 press reset.</li>
+          <li>It jumps straight to bloom: the stage is moving on every clock tick. Move only when <code>grow</code> is 1.</li>
+        </ol>
+      </section>
+
+      <section class="center-slide">
+        <h2>What you did first</h2>
+        <p class="big-quote">You wrote down what the flower should do.</p>
+        <p>Then you drew the pieces. The SystemVerilog was how you wrote that drawing down.</p>
+      </section>
+
+      <section class="center-slide">
+        <h1>Congrats! You designed a circuit.</h1> 
+      </section>
+
+    </div>
+  </div>
+  <footer class="hint">Bloom lab</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: "base",
+      securityLevel: "loose",
+      themeVariables: {
+        primaryColor: "#ffe4ef",
+        primaryTextColor: "#5a2438",
+        primaryBorderColor: "#f4a0bc",
+        lineColor: "#e07a9a",
+        secondaryColor: "#fff6f9",
+        tertiaryColor: "#fff0f5",
+        background: "#fff6f9",
+        mainBkg: "#ffe4ef",
+        nodeBorder: "#f4a0bc",
+        clusterBkg: "#fff5f8",
+        clusterBorder: "#f4a0bc",
+        titleColor: "#c73e72",
+        edgeLabelBackground: "#fff6f9",
+        fontFamily: "Nunito, sans-serif",
+        actorBkg: "#ffe4ef",
+        actorBorder: "#f4a0bc",
+        actorTextColor: "#5a2438",
+        signalColor: "#c73e72",
+        signalTextColor: "#5a2438",
+        labelBoxBkgColor: "#ffe4ef",
+        labelTextColor: "#5a2438",
+        noteBkgColor: "#fff6f9",
+        noteTextColor: "#5a2438",
+        noteBorderColor: "#f4a0bc"
+      }
+    });
+
+    document.querySelectorAll(".reveal .slides .mermaid").forEach((el, i) => {
+      el.dataset.diagram = el.textContent.trim();
+      el.id = "mmd-" + i;
+    });
+
+    function leafSlide() {
+      const secs = [...document.querySelectorAll("section.present")];
+      return secs[secs.length - 1] || null;
+    }
+
+    async function renderVisibleMermaid() {
+      const printing = document.body.classList.contains("print-pdf") || /print-pdf/.test(location.search);
+      const nodes = printing
+        ? [...document.querySelectorAll(".reveal .slides .mermaid")]
+        : [...(leafSlide()?.querySelectorAll(".mermaid") || [])].filter((el) => el.closest("section") === leafSlide());
+      const pending = [];
+      for (const el of nodes) {
+        const svg = el.querySelector("svg");
+        const box = svg && svg.getBoundingClientRect();
+        if (box && box.width > 80 && box.height > 40) continue;
+        el.removeAttribute("data-processed");
+        el.textContent = el.dataset.diagram;
+        pending.push(el);
+      }
+      if (pending.length) await mermaid.run({ nodes: pending });
+    }
+
+    Reveal.initialize({
+      hash: true,
+      slideNumber: "c/t",
+      width: 1280,
+      height: 720,
+      margin: 0.08,
+      transition: "fade",
+      backgroundTransition: "fade",
+      plugins: [RevealHighlight, RevealNotes]
+    }).then(() => requestAnimationFrame(() => renderVisibleMermaid()));
+
+    Reveal.on("slidechanged", () => {
+      requestAnimationFrame(() => renderVisibleMermaid());
+    });
+  </script>
+</body>
+</html>

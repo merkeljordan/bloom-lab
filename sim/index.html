@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bloom bench — test the flower</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #122018;
+      --panel: #1b3024;
+      --ink: #f4efe4;
+      --muted: #c5d4c8;
+      --seed: #8fd19e;
+      --petal: #f0b7c8;
+      --gold: #e7c27a;
+      --line: rgba(244,239,228,.14);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      background: radial-gradient(900px 500px at 10% -10%, #2a4a36, var(--bg));
+      color: var(--ink);
+    }
+    main {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+    }
+    h1 {
+      font-family: Fraunces, Georgia, serif;
+      font-size: 2.2rem;
+      margin: 0 0 6px;
+    }
+    .lede { color: var(--muted); margin: 0 0 20px; }
+    #test-banner {
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 14px;
+      margin-bottom: 22px;
+    }
+    #test-banner.pass { background: rgba(143,209,158,.18); color: var(--seed); }
+    #test-banner.fail { background: rgba(240,120,120,.2); color: #ffb4b4; }
+    .layout {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 20px;
+    }
+    @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+    .card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+    }
+    .stage {
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .emoji { font-size: 88px; line-height: 1; }
+    .state-name {
+      font-family: Fraunces, Georgia, serif;
+      font-size: 1.6rem;
+    }
+    .leds { display: flex; gap: 14px; margin-top: 10px; }
+    .led {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #24352b; border: 1px solid var(--line);
+    }
+    .led.on { background: var(--seed); box-shadow: 0 0 12px var(--seed); }
+    .led.bloom.on { background: var(--petal); box-shadow: 0 0 12px var(--petal); }
+    .controls { display: grid; gap: 10px; }
+    button, .sw {
+      font: inherit;
+      cursor: pointer;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      padding: 12px 14px;
+      text-align: left;
+    }
+    button:hover, .sw:hover { border-color: var(--seed); }
+    .sw.on { background: #2a4a36; border-color: var(--seed); }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .row button { flex: 1; text-align: center; }
+    kbd {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 1px 5px;
+      color: var(--gold);
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--line); }
+    th { color: var(--gold); font-weight: 500; }
+    .tiny { color: var(--muted); font-size: 13px; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+    .tabs button { flex: 0; padding: 8px 12px; }
+    .tabs button.active { background: #2a4a36; color: var(--seed); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Bloom bench</h1>
+    <p class="lede">A runnable model of the lab: Level 1 AND, Level 2 FSM, and the grow pulse. Same spec as the SystemVerilog.</p>
+    <div id="test-banner">Running tests…</div>
+
+    <div class="tabs">
+      <button id="tab-l1" class="active" type="button">Level 1</button>
+      <button id="tab-l2" type="button">Level 2</button>
+    </div>
+
+    <div class="layout">
+      <section class="card stage" aria-label="Flower">
+        <div class="emoji" id="emoji">🌱</div>
+        <div class="state-name" id="label">SEED</div>
+        <div class="tiny" id="detail">bloom = water AND sun</div>
+        <div class="leds" aria-hidden="true">
+          <div class="led" id="led0" title="LD0"></div>
+          <div class="led" id="led1" title="LD1"></div>
+          <div class="led bloom" id="led2" title="LD2"></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="controls">
+          <button class="sw" id="sw0" type="button" aria-pressed="false">SW0 water &nbsp;<kbd>W</kbd></button>
+          <button class="sw" id="sw1" type="button" aria-pressed="false">SW1 sun &nbsp;<kbd>S</kbd></button>
+          <div class="row" id="l2-only">
+            <button type="button" id="btn-grow">BTNU grow &nbsp;<kbd>G</kbd></button>
+            <button type="button" id="btn-reset">BTNC reset &nbsp;<kbd>R</kbd></button>
+          </div>
+          <p class="tiny">Holding both switches is one grow (edge detect). Release and turn both on again to bloom.</p>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:20px">
+      <h2 style="font-family:Fraunces,serif;font-size:1.1rem;margin:0 0 8px">Live truth / state</h2>
+      <table>
+        <thead><tr><th>water</th><th>sun</th><th>grow pulse</th><th>output</th></tr></thead>
+        <tbody>
+          <tr>
+            <td id="t-w">0</td>
+            <td id="t-s">0</td>
+            <td id="t-g">0</td>
+            <td id="t-o">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+  <script src="bloom.js"></script>
+  <script src="bench.js"></script>
+</body>
+</html>
