@@ -135,7 +135,7 @@ Before the workshop:
 | extra grow | BTNU |
 | Level 1 bloom | LD0 |
 | Level 2 SEED/SPROUT/BLOOM | LD0/LD1/LD2 |
-| UART TX | A18, 115200 8N1, ASCII `'0'`/`'1'`/`'2'` |
+| UART TX | A18, 115200 8N1, byte `0x30 + {sun, water, state_code}` from both tops |
 
 **Grow pulse:** rising edge of `(water & sun)` OR (BTNU pressed while both switches on). This is implemented in `top_level2.sv`, not in the student FSM.
 
@@ -250,7 +250,7 @@ Wrappers, UART, debounce, and testbenches in `rtl/` are instructor-complete on p
 - Wrong COM port; another program (Vivado hw_server) usually does **not** take UART, but serial terminals do.  
 - TX/RX swapped in XDC (must be FPGA **TX** = A18).  
 - Baud mismatch.  
-- Students still running `top_level1` (no UART).  
+- Window shows rain and sun but no growth on `top_level1`: expected, Level 1 only goes SEED ↔ BLOOM.  
 
 ---
 

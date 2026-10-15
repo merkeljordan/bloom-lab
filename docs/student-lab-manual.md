@@ -736,7 +736,7 @@ flowchart TB
   end
   W --> FSM
   S --> FSM
-  FSM -->|"UART state 0 / 1 / 2"| APP
+  FSM -->|"UART: state + water + sun"| APP
   APP --> F0[🌱]
   APP --> F1[🌿]
   APP --> F2[🌸]
@@ -746,21 +746,26 @@ flowchart TB
 
 ### FPGA-to-app communication
 
-Level 2’s wrapper sends a UART byte periodically:
-
-| Byte | State | App |
-|---|---|---|
-| ASCII `'0'` | SEED | 🌱 |
-| ASCII `'1'` | SPROUT | 🌿 |
-| ASCII `'2'` | BLOOM | 🌸 |
-
-Baud: **115200**, 8N1.
+Both wrappers (`top_level1` and `top_level2`) send one UART byte about 10 times per second:
 
 ```text
+byte = 0x30 + {sun, water, state_code}    // ASCII '0' .. '?'
+```
+
+| Bits | Meaning | App |
+|---|---|---|
+| `state_code` = 0 / 1 / 2 | SEED / SPROUT / BLOOM | 🌱 / 🌿 / 🌸 |
+| `water` (bit 2) | SW0 | Rain cloud |
+| `sun` (bit 3) | SW1 | Sun |
+
+Level 1 has no SPROUT: it sends SEED while `bloom` is off and BLOOM when it is on. Baud: **115200**, 8N1.
+
+```text
+python -m pip install pyserial
 python viz/bloom_viz.py COM5
 ```
 
-Replace `COM5` with your port (Windows Device Manager → Ports). Install with `pip install pyserial`. Skip this part if your site has no visualizer—LEDs are enough.
+Replace `COM5` with your port (Windows Device Manager → Ports). Run `python viz/bloom_viz.py` with no port to open a demo with on-screen switches. Skip this part if your site has no visualizer—LEDs are enough.
 
 ### What you are learning
 
@@ -1062,7 +1067,7 @@ flowchart LR
 | LD0 | seed / bloom L1 | Level 1: bloom · Level 2: SEED |
 | LD1 | sprout | Level 2: SPROUT |
 | LD2 | bloom | Level 2: BLOOM |
-| USB-UART TX (A18) | `uart_tx` | Visualizer (Level 2) |
+| USB-UART TX (A18) | `uart_tx` | Visualizer (Level 1 and Level 2) |
 
 **Grow in `top_level2`:** one-clock pulse when **SW0 and SW1 just became both 1**, or **BTNU pressed while both are 1**. Release and apply again to go SPROUT → BLOOM.
 

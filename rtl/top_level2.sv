@@ -48,12 +48,13 @@ module top_level2 (
 
     assign led = {led_bloom, led_sprout, led_seed};
 
-    // Send ASCII '0'/'1'/'2' about 10 times per second.
+    // About 10 times per second send 8'h30 + {sun, water, state_code}:
+    // ASCII '0'..'?', so '0'/'1'/'2' still mean SEED/SPROUT/BLOOM with both switches off.
     logic        uart_busy, uart_send;
     logic [23:0] div;
     logic [7:0]  uart_data;
 
-    assign uart_data = 8'h30 + {6'd0, state_code};
+    assign uart_data = 8'h30 + {4'd0, sun, water, state_code};
 
     always_ff @(posedge clk or posedge reset) begin
         if (reset) begin
