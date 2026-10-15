@@ -87,36 +87,11 @@ Visualizer if serial is ready; otherwise LED showcase.
 
 ---
 
-## Instructor setup checklist
+## Setup
 
-Before the workshop:
+Follow [`station-checklist.md`](station-checklist.md). It covers building the student kit (`scripts/make_student_kit.py`), setting up each station's Vivado project, good bitstreams, and fast fixes on the day.
 
-☐ Install/test Vivado on every computer (or a known-good VM/image)  
-☐ Install Digilent cable drivers  
-☐ Verify FPGA board power, USB, and **DONE** LED on a known-good bitstream  
-☐ Create the master Vivado project (`xc7a35tcpg236-1`)  
-☐ Add `rtl/*.sv` and `constraints/basys3_bloom.xdc`  
-☐ Set simulation and implementation tops as documented  
-☐ Configure all `.xdc` constraints  
-☐ Create Level 1 / Level 2 starter copies (TODOs intact)  
-☐ Keep instructor solution project **offline**  
-☐ Create known-good bitstreams (`solutions/` RTL)  
-☐ Test synthesis, implementation, programming  
-☐ Test every physical input/output (SW0/SW1/BTNC/BTNU/LD0–2)  
-☐ Test `viz/bloom_viz.py` on at least one PC  
-☐ Prepare backup USB drives / shared project folder  
-☐ Print one `handout/index.html` per board  
-☐ Prepare flower LED overlays  
-☐ Label boards 1…N and cables  
-
-### Vivado project recipe (if you must rebuild)
-
-1. New project → RTL project → part `xc7a35tcpg236-1`.  
-2. Add files: `rtl/starters/flower_level1.sv`, `rtl/starters/flower_level2.sv`, and every other `.sv` in `rtl/` **except** `rtl/flower_level1.sv` and `rtl/flower_level2.sv`. Those two are finished answers and define the same modules as the starters.  
-3. Add `constraints/basys3_bloom.xdc`.  
-4. Simulation top: `tb_flower_level1` then later `tb_flower_level2`.  
-5. Implementation top: `top_level1` then `top_level2`.  
-6. Save a zip **without** `solutions/`.
+Build stations from the kit, not from `rtl/` in this repo: `rtl/flower_level1.sv` and `rtl/flower_level2.sv` here are finished answers.
 
 ---
 

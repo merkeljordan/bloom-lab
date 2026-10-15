@@ -17,7 +17,9 @@ flowchart LR
 |---|---|---|
 | [`slides/index.html`](slides/index.html) | Everyone | Workshop slides; they teach the whole lab (open in a browser) |
 | [`handout/index.html`](handout/index.html) | Students | One-page printout for each board: Vivado clicks, board map, fixes |
-| [`docs/instructor-guide.md`](docs/instructor-guide.md) | Instructors | Setup, solutions, pedagogy, schedule |
+| [`docs/instructor-guide.md`](docs/instructor-guide.md) | Instructors | Solutions, pedagogy, schedule |
+| [`docs/station-checklist.md`](docs/station-checklist.md) | Instructors | Setting up each computer and board, and fixes on the day |
+| [`scripts/make_student_kit.py`](scripts/make_student_kit.py) | Instructors | Builds the student zip (no answers) and `BloomViz.exe` |
 | [`rtl/`](rtl/) | Students | Starter RTL, testbenches, top wrappers |
 | [`constraints/basys3_bloom.xdc`](constraints/basys3_bloom.xdc) | Students | Basys 3 pin map |
 | [`viz/bloom_viz.py`](viz/bloom_viz.py) | Students | Optional serial flower visualizer |
@@ -59,4 +61,6 @@ Open [`sim/index.html`](sim/index.html) in a browser to flip water, sun, grow, a
 
 ## Instructor note
 
-Keep `solutions/` off the student share. Print `handout/index.html` from a browser (it fits on one letter page). Give students the starter files from `rtl/starters/` plus the rest of `rtl/` and `constraints/`, but not `rtl/flower_level1.sv` or `rtl/flower_level2.sv`, which are finished answers.
+Students never need git, Python, or pip. Run `python scripts/make_student_kit.py` (needs `python -m pip install pyinstaller` once) to get `dist/bloom-student-kit.zip`: the starter files, tests, wrappers, pin file, printout, and `BloomViz.exe`, with no answers. Set up each station from that zip using [`docs/station-checklist.md`](docs/station-checklist.md).
+
+`rtl/flower_level1.sv`, `rtl/flower_level2.sv`, and `solutions/` are finished answers. Keep them off student machines.

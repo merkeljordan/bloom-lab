@@ -4,7 +4,7 @@ Reads one byte about 10 times per second at 115200 baud from the Basys 3
 USB-UART: 0x30 + {sun, water, state_code}, i.e. ASCII '0'..'?'.
 Draws the flower, the rain (SW0 water) and the sun (SW1 sun). Usage:
 
-    python bloom_viz.py               # no board: demo with on-screen switches
+    python bloom_viz.py               # demo switches, plus a board picker
     python -m pip install pyserial    # needed only with a board
     python bloom_viz.py COM5          # Windows
     python bloom_viz.py /dev/ttyUSB1  # Linux
@@ -19,6 +19,7 @@ import sys
 import threading
 import tkinter as tk
 from tkinter import font as tkfont
+from tkinter import ttk
 
 PAPER = "#fff4f8"
 CARD = "#ffffff"
@@ -100,21 +101,24 @@ class BloomApp:
         self.leds = tk.Canvas(root, width=340, height=64, bg=PAPER, highlightthickness=0)
         self.leds.pack(pady=(8, 4))
 
+        self.controls_row: tk.Frame | None = None
+        self.port_row: tk.Frame | None = None
         if not port:
             self.build_controls()
+            self.build_port_picker()
 
-        self.status = tk.Label(root, font=(body, 9), fg=MUTED, bg=PAPER, wraplength=340)
+        self.status = tk.Label(root, font=(body, 9), fg=MUTED, bg=PAPER, wraplength=360)
         self.status.pack(pady=(6, 0))
 
         self.draw()
         self.tick()
+        self.poll()
 
         if port:
-            self.status.config(text=f"Listening on {port}. Press BTNC to reset, then flip the switches.")
-            threading.Thread(target=self.read_serial, args=(port,), daemon=True).start()
-            self.poll()
+            self.connect(port)
         else:
-            self.status.config(text="Demo mode, no board connected. These buttons stand in for the switches.")
+            self.status.config(text="Demo mode: these buttons stand in for the switches. "
+                                    "To go live, plug in the board, pick its port, and press Connect.")
 
     def pill(self, parent: tk.Widget, text: str, command) -> tk.Label:
         b = tk.Label(parent, text=text, font=(self.body_font, 10, "bold"), fg=PINK_DEEP, bg=CARD,
@@ -122,8 +126,47 @@ class BloomApp:
         b.bind("<Button-1>", lambda _e: command())
         return b
 
+    def build_port_picker(self) -> None:
+        try:
+            from serial.tools import list_ports  # type: ignore
+        except ImportError:
+            return
+        row = self.port_row = tk.Frame(self.root, bg=PAPER)
+        row.pack(pady=(10, 0))
+        tk.Label(row, text="Board", font=(self.body_font, 10, "bold"), fg=MUTED, bg=PAPER).pack(side="left", padx=(0, 6))
+        self.port_var = tk.StringVar()
+
+        def refresh() -> None:
+            ports = list_ports.comports()
+            box["values"] = [f"{p.device}  {p.description}" for p in ports] or ["No boards found"]
+            if not self.port_var.get():
+                ftdi = [p for p in ports if p.vid == 0x0403]
+                if ftdi:
+                    self.port_var.set(f"{ftdi[-1].device}  {ftdi[-1].description}")
+
+        box = ttk.Combobox(row, textvariable=self.port_var, state="readonly", width=30, postcommand=refresh)
+        refresh()
+        box.pack(side="left")
+        self.pill(row, "Connect", self.connect_selected).pack(side="left", padx=(6, 0))
+
+    def connect_selected(self) -> None:
+        choice = self.port_var.get().split()
+        if not choice or choice[0] == "No":
+            self.status.config(text="Plug in the board, then pick its port from the list.", fg=PINK_DEEP)
+            return
+        self.connect(choice[0])
+
+    def connect(self, port: str) -> None:
+        for row in (self.controls_row, self.port_row):
+            if row:
+                row.pack_forget()
+        self.water = self.sun = False
+        self.status.config(text=f"Listening on {port}. Press BTNC to reset, then flip the switches.", fg=MUTED)
+        threading.Thread(target=self.read_serial, args=(port,), daemon=True).start()
+        self.draw()
+
     def build_controls(self) -> None:
-        row = tk.Frame(self.root, bg=PAPER)
+        row = self.controls_row = tk.Frame(self.root, bg=PAPER)
         row.pack(pady=(4, 0))
         self.water_btn = self.pill(row, "Water  SW0", lambda: self.demo_switch(water=not self.water))
         self.sun_btn = self.pill(row, "Sun  SW1", lambda: self.demo_switch(sun=not self.sun))
@@ -157,8 +200,9 @@ class BloomApp:
             return
         try:
             ser = serial.Serial(port, 115200, timeout=1)
-        except Exception as exc:
-            self.events.put(("error", f"Couldn't open {port}: {exc}"))
+        except Exception:
+            self.events.put(("error", f"Couldn't open {port}. Check the board is plugged in and on, "
+                                      "close any other program using that port, then try again."))
             return
         with ser:
             while True:
@@ -176,6 +220,9 @@ class BloomApp:
                     self.draw()
                 else:
                     self.status.config(text=str(value), fg=PINK_DEEP)
+                    for row in (self.controls_row, self.port_row):
+                        if row:
+                            row.pack(pady=(4, 0), before=self.status)
         except queue.Empty:
             pass
         self.root.after(30, self.poll)

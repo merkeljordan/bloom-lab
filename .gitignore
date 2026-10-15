@@ -28,8 +28,9 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Local sim build (scripts/run_tests.py)
+# Local sim build (scripts/run_tests.py) and student kit (scripts/make_student_kit.py)
 build/
+dist/
 
 # Python
 __pycache__/
